@@ -89,5 +89,92 @@ function avatarPorGenero(aluno) {
     : 'avatar-menino.png';
 }
 
+// ==========================================
+// VIEW: HOME
+// ==========================================
+/**
+ * Renderiza (monta) a tela inicial da aplicação.
+ * Exibe todos os cursos disponíveis para seleção.
+ */
+function renderHome() {
+ 
+  // Nenhum curso está selecionado
+  cursoAtual = null;
+ 
+  // Esconde o botão voltar
+  btnVoltar.style.display = 'none';
+ 
+  // Exibe o botão sair
+  btnSair.style.display = 'inline-block';
+ 
+  // Mensagem exibida enquanto a API responde
+  app.innerHTML = `<p class="msg">Carregando cursos...</p>`;
+ 
+  // Busca os cursos na API
+  getCursos()
+ 
+    .then(cursos => {
+ 
+      // Cria toda a estrutura HTML da página inicial
+      app.innerHTML = `
+        <div class="home">
+ 
+          <div class="home__coluna-esquerda">
+            <div class="home__texto">
+              <h1>Escolha um <strong>curso</strong> para gerenciar</h1>
+            </div>
+            <img src="assets/devices.png" alt="" class="home__devices">
+          </div>
+ 
+          <img src="assets/ilustracao-aluna.png" alt="" class="home__ilustracao">
+ 
+          <!-- Os botões dos cursos serão adicionados aqui -->
+          <div class="home__cursos" id="listaCursos"></div>
+ 
+        </div>
+      `;
+ 
+      // Obtém a div onde serão inseridos os botões
+      const listaCursos = document.getElementById('listaCursos');
+ 
+      // Percorre todos os cursos recebidos da API
+      cursos.forEach(curso => {
+ 
+        // Cria um botão dinamicamente
+        const btn = document.createElement('button');
+ 
+        btn.className = 'curso-btn';
+ 
+        // Define o ícone do curso
+        const icone = iconePorCurso(curso);
+ 
+        // Usa a sigla ou o nome do curso
+        const sigla = curso.sigla || curso.nome;
+ 
+        // Insere o conteúdo do botão
+        btn.innerHTML = `
+          <img src="assets/${icone}" alt="">
+          <span>${sigla}</span>
+        `;
+ 
+        // Ao clicar no botão, abre a turma correspondente
+        btn.addEventListener('click', () => renderTurma(curso.id));
+ 
+        // Adiciona o botão na tela
+        listaCursos.appendChild(btn);
+      });
+ 
+    })
+    // Caso ocorra algum erro na requisição
+    .catch(err => {
+
+      console.error(err);
+
+      app.innerHTML =
+        `<p class="msg">Erro ao carregar cursos.</p>`;
+    });
+}
+
+
 // Inicia a aplicação exibindo a tela Home
 renderHome();
