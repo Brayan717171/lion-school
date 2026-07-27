@@ -102,10 +102,10 @@ function renderHome() {
   cursoAtual = null;
  
   // Esconde o botão voltar
-  btnVoltar.style.display = 'none';
+  btnVoltar.style.display = 'inline-block';
  
   // Exibe o botão sair
-  btnSair.style.display = 'inline-block';
+  btnSair.style.display = 'none';
  
   // Mensagem exibida enquanto a API responde
   app.innerHTML = `<p class="msg">Carregando cursos...</p>`;
