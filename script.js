@@ -209,7 +209,93 @@ function renderTurma(curso) {
   carregarAlunos('todos');
 }
 
+/**
+ * Carrega os alunos da turma.
+ *
+ * @param {string} status - Filtro de status.
+ */
+function carregarAlunos(status) {
 
+  // Mensagem de carregamento
+  app.innerHTML = `<p class="msg">Carregando alunos...</p>`;
+
+  // Não envia filtro quando for "todos"
+  const filtro = status === 'todos' ? undefined : status;
+
+  getAlunos(cursoAtual.id, filtro)
+
+    .then(alunos => {
+
+      // Monta a tela da turma
+      app.innerHTML = `
+        <div class="turma">
+          <h2 class="turma__titulo">Turma ${cursoAtual.sigla || cursoAtual.nome}</h2>
+
+          <div class="turma__filtro">
+            <label for="filtroStatus">Filtrar por status:</label>
+            <select id="filtroStatus">
+              <option value="todos">Todos</option>
+              <option value="cursando">Cursando</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
+          </div>
+
+          <div class="legenda">
+            <span><span class="dot dot--cursando"></span> Cursando</span>
+            <span><span class="dot dot--finalizado"></span> Finalizado</span>
+          </div>
+
+          <div class="alunos-grid" id="alunosGrid"></div>
+        </div>
+      `;
+
+      // Atualiza o filtro selecionado
+      document.getElementById('filtroStatus').value = status;
+
+      // Recarrega ao trocar o filtro
+      document.getElementById('filtroStatus')
+        .addEventListener('change', (e) => carregarAlunos(e.target.value));
+
+      // Área onde os cards serão adicionados
+      const grid = document.getElementById('alunosGrid');
+
+      // Cria um card para cada aluno
+      alunos.forEach(aluno => {
+
+        const finalizado = aluno.status === 'finalizado';
+
+        // Cria o card
+        const card = document.createElement('div');
+        card.className = 'aluno-card' + (finalizado ? ' aluno-card--finalizado' : '');
+
+        // Escolhe o avatar
+        const avatar = avatarPorGenero(aluno);
+
+        card.innerHTML = `
+          <div class="aluno-card__foto">
+            <img src="assets/${avatar}" alt="">
+          </div>
+          <div class="aluno-card__nome">${aluno.nome}</div>
+        `;
+
+        // Abre os detalhes do aluno
+        card.addEventListener('click', () => renderAluno(aluno.id));
+
+        // Adiciona o card na tela
+        grid.appendChild(card);
+      });
+
+    })
+
+    // Erro ao carregar os alunos
+    .catch(err => {
+
+      console.error(err);
+
+      app.innerHTML =
+        `<p class="msg">Erro ao carregar alunos.</p>`;
+    });
+}
 
 
 // Inicia a aplicação
