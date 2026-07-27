@@ -1,0 +1,174 @@
+/* ========== RESET & CONFIGURAÇÕES GLOBAIS ========== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f2f4fb;
+}
+
+/* ========== COMPONENTE: HEADER (Estrutura Base) ========== */
+.header {
+  background: #2e3f8f;
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__logo-img {
+  height: 48px;
+}
+
+.header__btn-img {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.header__btn-img img {
+  height: 28px;
+  display: block;
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+#app {
+  flex: 1;
+  padding: 40px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== VIEW: HOME (Gerada via JavaScript) ========== */
+.home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  max-width: 1500px;
+  width: 100%;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+.home__coluna-esquerda {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 55px;
+}
+
+.home__texto h1 {
+  color: #2e3f8f;
+  font-size: 52px;
+  font-weight: 300;
+  max-width: 460px;
+  line-height: 1.2;
+}
+
+.home__texto h1 strong {
+  font-weight: 700;
+}
+
+.home__devices {
+  height: 190px;
+}
+
+.home__ilustracao {
+  height: 440px;
+}
+
+.home__cursos {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ========== COMPONENTE: BOTÕES DE CURSO (Gerados via JS loop) ========== */
+.curso-btn {
+  background: #2e3f8f;
+  color: white;
+  border: 2px solid #24327a;
+  padding: 36px 80px;
+  font-size: 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.25);
+  min-width: 340px;
+  justify-content: flex-start;
+}
+
+.curso-btn img {
+  height: 44px;
+  filter: brightness(0) invert(1); /* Deixa os ícones brancos */
+}
+
+.curso-btn:hover {
+  transform: translateY(-3px);
+  background: #24327a;
+}
+
+/* ========== COMPONENTE: FOOTER (Estrutura Base) ========== */
+.footer {
+  background: #2e3f8f;
+  color: white;
+  padding: 20px 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 40px;
+  justify-content: center;
+  font-size: 14px;
+  text-align: center;
+}
+
+.footer__icon {
+  height: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.footer__social {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.footer__social img {
+  height: 26px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.footer__social img:hover {
+  opacity: 1;
+}
+
+.footer__copy {
+  width: 100%;
+  text-align: center;
+  opacity: 0.7;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ========== MENSAGEM DE STATUS (Carregando / Erro) ========== */
+.msg {
+  text-align: center;
+  color: #666;
+  margin-top: 40px;
+  font-size: 16px;
+}
