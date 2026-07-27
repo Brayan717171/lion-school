@@ -2,40 +2,46 @@
 // CONFIGURAÇÕES GLOBAIS
 // ==========================================
 
-// Endereço base da API que fornece os dados dos cursos e alunos
+// URL da API
 const API_URL = 'https://lion-school-phbo.onrender.com';
 
-// Captura os elementos do HTML que serão manipulados pelo JavaScript
+// Elementos da página
 const app = document.getElementById('app');
 const btnVoltar = document.getElementById('btnVoltar');
 const btnSair = document.getElementById('btnSair');
 
-// Armazena o curso selecionado pelo usuário
+// Curso selecionado
 let cursoAtual = null;
+
+// Função chamada pelo botão voltar
+let onVoltar = null;
+
+// Executa a função definida para o botão voltar
+btnVoltar.addEventListener('click', () => {
+  if (typeof onVoltar === 'function') onVoltar();
+});
 
 // ==========================================
 // FUNÇÕES DE API
 // ==========================================
 
 /**
- * Busca todos os cursos cadastrados na API.
- * Retorna um array de cursos em formato JSON.
+ * Retorna a lista de cursos da API.
  */
 function getCursos() {
   return fetch(`${API_URL}/cursos`).then(res => res.json());
 }
 
 /**
- * Busca os alunos de um curso.
- * Também permite filtrar pelo status (cursando/finalizado).
+ * Retorna os alunos de um curso.
  *
- * @param {number} cursoId - ID do curso selecionado.
- * @param {string} status - Status do aluno (opcional).
+ * @param {number} cursoId - ID do curso.
+ * @param {string} status - Filtro de status.
  */
 function getAlunos(cursoId, status) {
   const params = new URLSearchParams();
 
-  // Adiciona os parâmetros na URL apenas se existirem
+  // Adiciona os filtros na URL
   if (cursoId) params.append('curso_id', cursoId);
   if (status) params.append('status', status);
 
@@ -43,7 +49,8 @@ function getAlunos(cursoId, status) {
 }
 
 /**
- * Busca os dados completos de um aluno específico.
+ * Retorna um aluno pelo ID.
+ *
  * @param {number} id - ID do aluno.
  */
 function getAluno(id) {
@@ -51,10 +58,9 @@ function getAluno(id) {
 }
 
 /**
- * Define qual ícone será exibido para cada curso.
- * Verifica o ID ou a sigla do curso.
+ * Define o ícone do curso.
  *
- * @param {object} curso - Objeto recebido da API.
+ * @param {object} curso - Dados do curso.
  */
 function iconePorCurso(curso) {
   const texto = (curso.sigla || curso.nome || '').toUpperCase();
@@ -65,13 +71,12 @@ function iconePorCurso(curso) {
   if (curso.id === 2 || texto.includes('RED'))
     return 'icon-network.png';
 
-  // Ícone padrão caso não encontre nenhuma correspondência
+  // Ícone padrão
   return 'icon-code.png';
 }
 
 /**
- * Escolhe automaticamente o avatar do aluno.
- * Caso a API não informe o sexo, utiliza o ID para alternar entre os avatares.
+ * Define o avatar do aluno.
  *
  * @param {object} aluno - Dados do aluno.
  */
@@ -83,7 +88,7 @@ function avatarPorGenero(aluno) {
   if (aluno.sexo === 'M' || aluno.genero === 'masculino')
     return 'avatar-menino.png';
 
-  // Caso não exista informação de sexo, alterna usando o ID
+  // Alterna o avatar caso a API não informe o sexo
   return aluno.id % 2 === 0
     ? 'avatar-menina.png'
     : 'avatar-menino.png';
@@ -92,30 +97,33 @@ function avatarPorGenero(aluno) {
 // ==========================================
 // VIEW: HOME
 // ==========================================
+
 /**
- * Renderiza (monta) a tela inicial da aplicação.
- * Exibe todos os cursos disponíveis para seleção.
+ * Exibe a tela inicial.
  */
 function renderHome() {
  
-  // Nenhum curso está selecionado
+  // Limpa o curso selecionado
   cursoAtual = null;
  
   // Esconde o botão voltar
-  btnVoltar.style.display = 'inline-block';
+  btnVoltar.style.display = 'none';
  
-  // Exibe o botão sair
-  btnSair.style.display = 'none';
+  // Mostra o botão sair
+  btnSair.style.display = 'inline-block';
+
+  // Não existe tela anterior
+  onVoltar = null;
  
-  // Mensagem exibida enquanto a API responde
+  // Mensagem de carregamento
   app.innerHTML = `<p class="msg">Carregando cursos...</p>`;
  
-  // Busca os cursos na API
+  // Busca os cursos
   getCursos()
  
     .then(cursos => {
  
-      // Cria toda a estrutura HTML da página inicial
+      // Monta a tela inicial
       app.innerHTML = `
         <div class="home">
  
@@ -134,38 +142,38 @@ function renderHome() {
         </div>
       `;
  
-      // Obtém a div onde serão inseridos os botões
+      // Área onde os botões serão inseridos
       const listaCursos = document.getElementById('listaCursos');
  
-      // Percorre todos os cursos recebidos da API
+      // Cria um botão para cada curso
       cursos.forEach(curso => {
  
-        // Cria um botão dinamicamente
+        // Cria o botão
         const btn = document.createElement('button');
  
         btn.className = 'curso-btn';
  
-        // Define o ícone do curso
+        // Escolhe o ícone
         const icone = iconePorCurso(curso);
  
-        // Usa a sigla ou o nome do curso
+        // Nome exibido no botão
         const sigla = curso.sigla || curso.nome;
  
-        // Insere o conteúdo do botão
+        // Conteúdo do botão
         btn.innerHTML = `
           <img src="assets/${icone}" alt="">
           <span>${sigla}</span>
         `;
  
-        // Ao clicar no botão, abre a turma correspondente
-        btn.addEventListener('click', () => renderTurma(curso.id));
+        // Abre a turma do curso
+        btn.addEventListener('click', () => renderTurma(curso));
  
         // Adiciona o botão na tela
         listaCursos.appendChild(btn);
       });
  
     })
-    // Caso ocorra algum erro na requisição
+    // Erro ao carregar os cursos
     .catch(err => {
 
       console.error(err);
@@ -176,5 +184,33 @@ function renderHome() {
 }
 
 
-// Inicia a aplicação exibindo a tela Home
+// ==========================================
+// VIEW: TURMA
+// ==========================================
+
+/**
+ * Exibe a turma do curso.
+ *
+ * @param {object} curso - Curso selecionado.
+ */
+function renderTurma(curso) {
+
+  // Salva o curso atual
+  cursoAtual = curso;
+
+  // Ajusta os botões da tela
+  btnSair.style.display = 'none';
+  btnVoltar.style.display = 'inline-block';
+
+  // Volta para a Home
+  onVoltar = renderHome;
+
+  // Carrega todos os alunos
+  carregarAlunos('todos');
+}
+
+
+
+
+// Inicia a aplicação
 renderHome();
