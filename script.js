@@ -226,26 +226,38 @@ function carregarAlunos(status) {
 
     .then(alunos => {
 
+      // Remove alunos duplicados que a API às vezes retorna repetidos
+      const vistos = new Set();
+      alunos = alunos.filter(aluno => {
+        if (vistos.has(aluno.id)) return false;
+        vistos.add(aluno.id);
+        return true;
+      });
+
       // Monta a tela da turma
       app.innerHTML = `
-        <div class="turma">
-          <h2 class="turma__titulo">Turma ${cursoAtual.sigla || cursoAtual.nome}</h2>
+        <div class="turma-view">
 
-          <div class="turma__filtro">
-            <label for="filtroStatus">Status:</label>
-            <select id="filtroStatus">
-              <option value="todos">Todos</option>
+          <div class="turma__toolbar">
+            <select id="filtroStatus" class="turma__select">
+              <option value="todos">Status</option>
               <option value="cursando">Cursando</option>
               <option value="finalizado">Finalizado</option>
             </select>
+
+            <div class="legenda">
+              <span class="legenda__label">LEGENDA</span>
+              <span><span class="dot dot--cursando"></span> Cursando</span>
+              <span><span class="dot dot--finalizado"></span> Finalizado</span>
+            </div>
           </div>
 
-          <div class="legenda">
-            <span><span class="dot dot--cursando"></span> Cursando</span>
-            <span><span class="dot dot--finalizado"></span> Finalizado</span>
+          <div class="turma">
+            <h2 class="turma__titulo">${cursoAtual.nome || cursoAtual.sigla}</h2>
+
+            <div class="alunos-grid" id="alunosGrid"></div>
           </div>
 
-          <div class="alunos-grid" id="alunosGrid"></div>
         </div>
       `;
 
@@ -273,7 +285,7 @@ function carregarAlunos(status) {
 
         card.innerHTML = `
           <div class="aluno-card__foto">
-            <img src="${aluno.foto || `assets/${avatarPorGenero(aluno)}`}" alt="">
+             <img src="${aluno.foto || `assets/${avatarPorGenero(aluno)}`}" alt="">
           </div>
           <div class="aluno-card__nome">${aluno.nome}</div>
         `;
@@ -321,13 +333,49 @@ function renderAluno(id) {
           </div>
         </div>
       `;
-      
+      montarGrafico(aluno.desempenho);
     })
     .catch(err => {
       console.error(err);
       app.innerHTML = `<p class="msg">Erro ao carregar detalhes do aluno.</p>`;
     });
 
+}
+
+/**
+ * Monta o gráfico de barras de desempenho do aluno.
+ *
+ * @param {Array<{categoria: string, valor: number}>} desempenho - Lista de categorias e notas,
+ *   ex: [{ categoria: "SGP", valor: 85 }, { categoria: "IP", valor: 92 }].
+ */
+function montarGrafico(desempenho) {
+  const grafico = document.getElementById('grafico');
+
+  if (!grafico || !Array.isArray(desempenho)) return;
+
+  // Define a cor sólida e o brilho (glow) da barra conforme o valor
+  function corPorValor(valor) {
+    if (valor < 40) return { solida: '#c0392b', glow: 'rgba(192, 57, 43, 0.55)' };   // vermelho
+    if (valor < 60) return { solida: '#e0b840', glow: 'rgba(224, 184, 64, 0.55)' };  // amarelo
+    return { solida: '#2e3f8f', glow: 'rgba(46, 63, 143, 0.55)' };                   // azul
+  }
+
+  desempenho.forEach(({ categoria, valor }) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'grafico__barra-wrap';
+
+    const cor = corPorValor(valor);
+
+    wrap.innerHTML = `
+      <div class="grafico__valor" style="color:${cor.solida}">${valor}</div>
+      <div class="grafico__barra-track">
+        <div class="grafico__barra" style="height:${valor}%; background:${cor.solida}; box-shadow: 0 0 14px 2px ${cor.glow};"></div>
+      </div>
+      <div class="grafico__label" style="color:${cor.solida}">${categoria}</div>
+    `;
+
+    grafico.appendChild(wrap);
+  });
 }
 
 
