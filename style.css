@@ -135,8 +135,6 @@ body {
   text-decoration: underline;
   text-align: left;
   margin: 0 0 30px;
-  display: flex;
-  justify-content: center;
 }
 
 .turma-view {
@@ -150,7 +148,7 @@ body {
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
-  margin-top: -520px;
+  margin-top: -40px;
   margin-bottom: 24px;
   background: #dfe3f7;
   padding: 14px 32px;
@@ -450,5 +448,156 @@ body {
   .aluno-detalhe {
     padding: 32px;
     gap: 40px;
+  }
+}
+
+/* ---------- CELULAR GRANDE (até 768px) ---------- */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header__logo-img {
+    height: 36px;
+  }
+
+  #app {
+    padding: 24px 16px;
+  }
+
+  .home {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .home__coluna-esquerda {
+    align-items: center;
+  }
+
+  .home__texto h1 {
+    font-size: 30px;
+    max-width: 100%;
+  }
+
+  .home__ilustracao {
+    display: none; /* some com a ilustração pra não empurrar o conteúdo */
+  }
+
+  .home__cursos {
+    width: 100%;
+    align-items: center;
+  }
+
+  .curso-btn {
+    width: 100%;
+    max-width: 340px;
+    min-width: 0;
+    padding: 20px 28px;
+    font-size: 20px;
+    justify-content: center;
+  }
+
+  .turma__toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .legenda {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .turma__titulo {
+    font-size: 26px;
+  }
+
+  .alunos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+  }
+
+  .aluno-card {
+    min-height: 180px;
+    padding: 16px 10px 20px;
+    gap: 14px;
+  }
+
+  .aluno-card__foto {
+    width: 80px;
+    height: 80px;
+  }
+
+  .aluno-card__nome {
+    font-size: 13px;
+  }
+
+  .aluno-detalhe {
+    flex-direction: column;
+    padding: 24px 20px;
+    gap: 24px;
+  }
+
+  .aluno-detalhe__grafico-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .grafico {
+    gap: 14px;
+    height: 220px;
+    overflow-x: auto;
+  }
+
+  .grafico__barra-track {
+    height: 150px;
+  }
+
+  .footer {
+    padding: 16px;
+    gap: 12px 24px;
+    font-size: 12px;
+  }
+}
+
+/* ---------- CELULAR PEQUENO (até 480px) ---------- */
+@media (max-width: 480px) {
+  .home__texto h1 {
+    font-size: 24px;
+  }
+
+  .home__devices {
+    height: 100px;
+  }
+
+  .curso-btn {
+    font-size: 17px;
+    padding: 16px 20px;
+    gap: 14px;
+  }
+
+  .curso-btn img {
+    height: 30px;
+  }
+
+  .turma__titulo {
+    font-size: 22px;
+  }
+
+  .alunos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+  }
+
+  .aluno-card__foto {
+    width: 64px;
+    height: 64px;
+  }
+
+  .aluno-detalhe__foto {
+    width: 120px;
+    height: 120px;
   }
 }
