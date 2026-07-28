@@ -232,7 +232,7 @@ function carregarAlunos(status) {
           <h2 class="turma__titulo">Turma ${cursoAtual.sigla || cursoAtual.nome}</h2>
 
           <div class="turma__filtro">
-            <label for="filtroStatus">Filtrar por status:</label>
+            <label for="filtroStatus">Status:</label>
             <select id="filtroStatus">
               <option value="todos">Todos</option>
               <option value="cursando">Cursando</option>
@@ -273,7 +273,7 @@ function carregarAlunos(status) {
 
         card.innerHTML = `
           <div class="aluno-card__foto">
-            <img src="assets/${avatar}" alt="">
+            <img src="${aluno.foto || `assets/${avatarPorGenero(aluno)}`}" alt="">
           </div>
           <div class="aluno-card__nome">${aluno.nome}</div>
         `;
@@ -296,6 +296,40 @@ function carregarAlunos(status) {
         `<p class="msg">Erro ao carregar alunos.</p>`;
     });
 }
+
+function renderAluno(id) {
+  btnSair.style.display = 'none';
+  btnVoltar.style.display = 'inline-block';
+  btnVoltar.onclick = () => renderTurma(cursoAtual);
+  
+  app.innerHTML = `<p class="msg">Carregando detalhes do aluno...</p>`;
+  
+  getAluno(id)
+    .then(aluno => {
+      const nomeUpper = aluno.nome.toUpperCase();
+
+      app.innerHTML = `
+        <div class="aluno-detalhe">
+          <div class="aluno-detalhe__info">
+            <div class="aluno-detalhe__foto">
+              <img src="${aluno.foto || `assets/${avatarPorGenero(aluno)}`}" alt="">
+            </div>
+            <div class="aluno-detalhe__nome">${nomeUpper}</div>
+          </div>
+          <div class="aluno-detalhe__grafico-wrapper">
+            <div class="grafico" id="grafico"></div>
+          </div>
+        </div>
+      `;
+      
+    })
+    .catch(err => {
+      console.error(err);
+      app.innerHTML = `<p class="msg">Erro ao carregar detalhes do aluno.</p>`;
+    });
+
+}
+
 
 
 // Inicia a aplicação
